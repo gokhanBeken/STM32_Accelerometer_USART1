@@ -4,20 +4,20 @@
       <target file="stm32f4xx_rcc.o" lastModified="1462f683eed">
          <source file="..\..\..\cmsis_lib\source\stm32f4xx_rcc.c" lastModified="1462ef9824d"/>
       </target>
-      <target file="misc.o" lastModified="1462f684026">
-         <source file="..\..\..\cmsis_lib\source\misc.c" lastModified="1462ef9824d"/>
-      </target>
       <target file="system_stm32f4xx.o" lastModified="1462f683fb9">
          <source file="..\..\..\cmsis_boot\system_stm32f4xx.c" lastModified="1462ef9822e"/>
       </target>
-      <target file="usart.o" lastModified="1462f684084">
-         <source file="..\..\..\user\usart.c" lastModified="1462f4735e6"/>
+      <target file="misc.o" lastModified="1462f684026">
+         <source file="..\..\..\cmsis_lib\source\misc.c" lastModified="1462ef9824d"/>
       </target>
       <target file="stm32f4xx_gpio.o" lastModified="1462f683f5b">
          <source file="..\..\..\cmsis_lib\source\stm32f4xx_gpio.c" lastModified="1462ef9824d"/>
       </target>
-      <target file="main.o" lastModified="1462faba5ea">
-         <source file="..\..\..\main.c" lastModified="1462fa9a752"/>
+      <target file="usart.o" lastModified="1462f684084">
+         <source file="..\..\..\user\usart.c" lastModified="1462f4735e6"/>
+      </target>
+      <target file="main.o" lastModified="1462fdfdd1f">
+         <source file="..\..\..\main.c" lastModified="1462fdfd668"/>
       </target>
       <target file="stm32f4xx_usart.o" lastModified="1462f683dc4">
          <source file="..\..\..\cmsis_lib\source\stm32f4xx_usart.c" lastModified="1462ef9825d"/>

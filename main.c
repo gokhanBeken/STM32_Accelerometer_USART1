@@ -7,13 +7,15 @@ unsigned char CNTR; // PWM Counter
 
 //bayraklar
 char x_durum = 0, y_durum = 0; //koordinat bayraklarimiz
-volatile int durum=0; //timerdeki xy durumunu global yapmak icin
+volatile int durum = 0; //timerdeki xy durumunu global yapmak icin
 
 void UsartInit(void);
 void SendChar(char Tx);
 void SendTxt(char *Adr);
 
 void DelayMs(int miliseconds);
+
+char PinTest(unsigned char port, char bit);
 
 /*****************************************************************************************************
  CPU PLL ile 168Mhz de kosturulur
@@ -60,6 +62,8 @@ void SystemInit2() {
 	NVIC->ISER[1] = 0X00800000; // NVIC de Timer 7 interrupta izin verelim
 	TIM7->CR1 |= 0x0001; // Counter Enable
 
+	GPIOA->MODER &= ~0x00000003; //a0 butonunu giris yapalim(00=input)
+
 }
 void TIM7_IRQHandler() {
 	unsigned short d, i, j;
@@ -79,57 +83,53 @@ void TIM7_IRQHandler() {
 		j = j >> 1;
 	}
 
-	durum=d;
+	durum = d;
 	/*
 
-	if (((d) & (1 << 14)) - (1 << 14) == 0) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
-		x = 1;
-	}
-	if (((d) & (1 << 12)) - (1 << 12) == 0) { //demekki 12. bit 1 olmus yani yesil led yani led4 yani -x kordinati
-		x = 0;
-	}
+	 if (((d) & (1 << 14)) - (1 << 14) == 0) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+	 x = 1;
+	 }
+	 if (((d) & (1 << 12)) - (1 << 12) == 0) { //demekki 12. bit 1 olmus yani yesil led yani led4 yani -x kordinati
+	 x = 0;
+	 }
 
-	if (((d) & (1 << 13)) - (1 << 13) == 0) { //demekki 13. bit 1 olmus yani turuncu led yani led3 yani +y kordinati
-		y = 1;
-	}
-	if (((d) & (1 << 15)) - (1 << 15) == 0) { //demekki 15. bit 1 olmus yani mavi led yani led6 yani -y kordinati
-		y = 0;
-	}
+	 if (((d) & (1 << 13)) - (1 << 13) == 0) { //demekki 13. bit 1 olmus yani turuncu led yani led3 yani +y kordinati
+	 y = 1;
+	 }
+	 if (((d) & (1 << 15)) - (1 << 15) == 0) { //demekki 15. bit 1 olmus yani mavi led yani led6 yani -y kordinati
+	 y = 0;
+	 }
 
-	if (x) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
-		GPIOD->ODR |= (1 << 14);
-		GPIOD->ODR &= ~(1 << 12);
-	} else {
-		GPIOD->ODR |= (1 << 12);
-		GPIOD->ODR &= ~(1 << 14);
-	}
+	 if (x) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+	 GPIOD->ODR |= (1 << 14);
+	 GPIOD->ODR &= ~(1 << 12);
+	 } else {
+	 GPIOD->ODR |= (1 << 12);
+	 GPIOD->ODR &= ~(1 << 14);
+	 }
 
-	if (y) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
-		GPIOD->ODR |= (1 << 13);
-		GPIOD->ODR &= ~(1 << 15);
-	} else {
-		GPIOD->ODR |= (1 << 15);
-		GPIOD->ODR &= ~(1 << 13);
-	}
-*/
+	 if (y) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+	 GPIOD->ODR |= (1 << 13);
+	 GPIOD->ODR &= ~(1 << 15);
+	 } else {
+	 GPIOD->ODR |= (1 << 15);
+	 GPIOD->ODR &= ~(1 << 13);
+	 }
+	 */
 
-/*
-	if (x) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
-		SendChar('X');
-	} else {
-		SendChar('x');
-	}
+	/*
+	 if (x) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+	 SendChar('X');
+	 } else {
+	 SendChar('x');
+	 }
 
-	if (y) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
-		SendChar('Y');
-	} else {
-		SendChar('y');
-	}
-*/
-
-
-
-
+	 if (y) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+	 SendChar('Y');
+	 } else {
+	 SendChar('y');
+	 }
+	 */
 
 	//GPIOD->ODR = d;
 }
@@ -162,7 +162,6 @@ int main() {
 	signed char y[16]; // PWM registerler
 	signed char who, xo, yo, b;
 	signed short a;
-
 
 	UsartInit();
 
@@ -216,9 +215,6 @@ int main() {
 				}
 			}
 
-
-
-
 			if (((durum) & (1 << 14)) - (1 << 14) == 0) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
 				x_durum = 1;
 			}
@@ -249,25 +245,23 @@ int main() {
 				GPIOD->ODR &= ~(1 << 13);
 			}
 
+			if (PinTest('A',0)) {
+				if (x_durum) {
+					SendChar('X');
+				} else {
+					SendChar('x');
+				}
 
-			if (x_durum) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
-				SendChar('X');
-			} else {
-				SendChar('x');
+				if (y_durum) {
+					SendChar('Y');
+				} else {
+					SendChar('y');
+				}
+				SendTxt("\r\n");
+				DelayMs(100);
+
 			}
-
-			if (y_durum) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
-				SendChar('Y');
-			} else {
-				SendChar('y');
-			}
-			SendTxt("\r\n");
-			DelayMs(100);
-
-
-
 		}
-
 
 	}
 
@@ -280,39 +274,35 @@ int main() {
 
 }
 
-void UsartInit(void)
-{
+void UsartInit(void) {
 //   USART3 MODULUNU AKTIF HALE GETIRELIM
 
-   RCC->APB1ENR|=0x00040000;      // USART3 Clk Enable (Rehber Sayfa 113)
-   RCC->APB1RSTR|=0x00040000;      // USART3 Resetlendi
-   GPIOB->AFR[1]=0x07777700;             // PB10..PB14 pinleri USART3 ile alakalandirildi (Hard Sayfa 49)
-   GPIOB->MODER|=0x2AA00000;      // GPIOB 10..14 icin alternatif fonksiyon tanimi (Rehber Sayfa 148)
+	RCC->APB1ENR |= 0x00040000; // USART3 Clk Enable (Rehber Sayfa 113)
+	RCC->APB1RSTR |= 0x00040000; // USART3 Resetlendi
+	GPIOB->AFR[1] = 0x07777700; // PB10..PB14 pinleri USART3 ile alakalandirildi (Hard Sayfa 49)
+	GPIOB->MODER |= 0x2AA00000; // GPIOB 10..14 icin alternatif fonksiyon tanimi (Rehber Sayfa 148)
 
 //   USART3 MODULUNU AYARLAYALIM      // 1 Start, 8 Data, 1 Stop, No parity (Default degerler)
 
-   RCC->APB1RSTR&=~0x00040000;      // USART3 Reseti kaldiralim
-   USART3->SR&=~0X03FF;                 // Status registeri silelim
-   USART3->BRR=0X1112;            // 9600 Baud
+	RCC->APB1RSTR &= ~0x00040000; // USART3 Reseti kaldiralim
+	USART3->SR &= ~0X03FF; // Status registeri silelim
+	USART3->BRR = 0X1112; // 9600 Baud
 
-   USART3->CR1|=0x0000200C;              // USART3 enable
+	USART3->CR1 |= 0x0000200C; // USART3 enable
 }
 
-void SendChar(char Tx)
-{
-   while(!(USART3->SR&0x80));      // TX Buffer dolu ise bekle (Rehber Sayfa 646)
-   USART3->DR=Tx;
+void SendChar(char Tx) {
+	while (!(USART3->SR & 0x80))
+		; // TX Buffer dolu ise bekle (Rehber Sayfa 646)
+	USART3->DR = Tx;
 }
 
-void SendTxt(char *Adr)
-{
-      while(*Adr)
-        {
-          SendChar(*Adr);
-          Adr++;
-        }
+void SendTxt(char *Adr) {
+	while (*Adr) {
+		SendChar(*Adr);
+		Adr++;
+	}
 }
-
 
 void DelayMs(int miliseconds) {
 	int i = 0, j = 0;
@@ -323,4 +313,24 @@ void DelayMs(int miliseconds) {
 	}
 }
 
+char PinTest(unsigned char port, char bit){
+        char sonuc=0;
 
+        if(port=='a' || port=='A'){
+            if(!(((GPIOA->IDR)&(1<<bit)) - (1<<bit))){ //butona basildi mi
+                sonuc=1;
+            }else{
+                sonuc=0;
+            }
+        }
+
+        return(sonuc);
+
+        /*
+        pinset, pinclr ve pininp fonksiyonlarinin her birisi hata dondurme yetenegine sahiptir.
+
+        Hata degeri 2 olarak geri donulduyse olmayan bir GPIO dan yada olmayan bir pin numarasindan bahsediyoruz demektir.
+
+        pinset('J',0) yada pinclr('A',20) 2 hatasi ile geri donuse neden olur.
+        */
+}
