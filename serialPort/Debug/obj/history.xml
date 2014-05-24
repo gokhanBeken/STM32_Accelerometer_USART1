@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="arm-none-eabi-gcc noversion nomachine -mcpu=cortex-m4 -mthumb -Wall -ffunction-sections -g -O0 -c -DSTM32F407VG -DSTM32F4XX -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -I..\..\..\..\..\Users\gokhan\Documents\GitHub\STM32_Accelerometer_USART1\cmsis_boot -I..\..\..\..\..\Users\gokhan\Documents\GitHub\STM32_Accelerometer_USART1\cmsis_lib -I..\..\..\..\..\Users\gokhan\Documents\GitHub\STM32_Accelerometer_USART1\cmsis_lib\include -I..\..\..\..\..\Users\gokhan\Documents\GitHub\STM32_Accelerometer_USART1\user -I..\..\..\..\..\Users\gokhan\Documents\GitHub -I..\..\..\..\..\Users\gokhan\Documents\GitHub\STM32_Accelerometer_USART1\cmsis -I..\..\..\..\..\Users\gokhan\Documents\GitHub\STM32_Accelerometer_USART1">
+      <target file="stm32f4xx_rcc.o" lastModified="1462f683eed">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_rcc.c" lastModified="1462ef9824d"/>
+      </target>
+      <target file="misc.o" lastModified="1462f684026">
+         <source file="..\..\..\cmsis_lib\source\misc.c" lastModified="1462ef9824d"/>
+      </target>
+      <target file="system_stm32f4xx.o" lastModified="1462f683fb9">
+         <source file="..\..\..\cmsis_boot\system_stm32f4xx.c" lastModified="1462ef9822e"/>
+      </target>
+      <target file="usart.o" lastModified="1462f684084">
+         <source file="..\..\..\user\usart.c" lastModified="1462f4735e6"/>
+      </target>
+      <target file="stm32f4xx_gpio.o" lastModified="1462f683f5b">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_gpio.c" lastModified="1462ef9824d"/>
+      </target>
+      <target file="main.o" lastModified="1462f7d1e5e">
+         <source file="..\..\..\main.c" lastModified="1462f7d12c6"/>
+      </target>
+      <target file="stm32f4xx_usart.o" lastModified="1462f683dc4">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_usart.c" lastModified="1462ef9825d"/>
+      </target>
+      <target file="startup_stm32f4xx.o" lastModified="1462f683e03">
+         <source file="..\..\..\cmsis_boot\startup\startup_stm32f4xx.c" lastModified="1462ef9821e"/>
+      </target>
+   </processor>
+</history>
