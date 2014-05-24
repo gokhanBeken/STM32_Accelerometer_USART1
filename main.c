@@ -6,7 +6,14 @@ unsigned char SRG[8]; // Shadow Registerler
 unsigned char CNTR; // PWM Counter
 
 //bayraklar
-char x = 0, y = 0; //koordinat bayraklarimiz
+char x_durum = 0, y_durum = 0; //koordinat bayraklarimiz
+volatile int durum=0; //timerdeki xy durumunu global yapmak icin
+
+void UsartInit(void);
+void SendChar(char Tx);
+void SendTxt(char *Adr);
+
+void DelayMs(int miliseconds);
 
 /*****************************************************************************************************
  CPU PLL ile 168Mhz de kosturulur
@@ -56,6 +63,7 @@ void SystemInit2() {
 }
 void TIM7_IRQHandler() {
 	unsigned short d, i, j;
+
 	TIM7->SR = 0; // Timer Int Flagini silelim
 	//d = GPIOD->ODR | 0xFF00; //bu satira gerek yok, o pinleri baska bir is icin kullanamayiz yoksa
 	d = 0xFF00;
@@ -70,39 +78,9 @@ void TIM7_IRQHandler() {
 			d &= ~j;
 		j = j >> 1;
 	}
+
+	durum=d;
 	/*
-	 if (((d) & (1 << 12)) - (1 << 12) == 0) { //demekki 12. bit 1 olmus yani yesil led yani led4 yani -x kordinati
-	 GPIOD->ODR |= (1 << 12);
-	 x = 0;
-	 } else {
-	 GPIOD->ODR &= ~(1 << 12);
-	 //x=1;
-	 }
-
-	 if (((d) & (1 << 14)) - (1 << 14) == 0) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
-	 GPIOD->ODR |= (1 << 14);
-	 x = 1;
-	 } else {
-	 GPIOD->ODR &= ~(1 << 14);
-	 }
-
-	 if (((d) & (1 << 15)) - (1 << 15) == 0) { //demekki 15. bit 1 olmus yani mavi led yani led6 yani -y kordinati
-	 GPIOD->ODR |= (1 << 15);
-	 y = 0;
-	 } else {
-	 GPIOD->ODR &= ~(1 << 15);
-	 //y=1;
-	 }
-
-	 if (((d) & (1 << 13)) - (1 << 13) == 0) { //demekki 13. bit 1 olmus yani turuncu led yani led3 yani +y kordinati
-	 GPIOD->ODR |= (1 << 13);
-	 y = 1;
-	 } else {
-	 GPIOD->ODR &= ~(1 << 13);
-	 }
-
-
-	 */
 
 	if (((d) & (1 << 14)) - (1 << 14) == 0) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
 		x = 1;
@@ -133,6 +111,25 @@ void TIM7_IRQHandler() {
 		GPIOD->ODR |= (1 << 15);
 		GPIOD->ODR &= ~(1 << 13);
 	}
+*/
+
+/*
+	if (x) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+		SendChar('X');
+	} else {
+		SendChar('x');
+	}
+
+	if (y) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+		SendChar('Y');
+	} else {
+		SendChar('y');
+	}
+*/
+
+
+
+
 
 	//GPIOD->ODR = d;
 }
@@ -165,6 +162,11 @@ int main() {
 	signed char y[16]; // PWM registerler
 	signed char who, xo, yo, b;
 	signed short a;
+
+
+	UsartInit();
+
+	SendTxt("start \r\n");
 
 	if (Read(0x0F) == 0x3B) // Who are you ?
 			{
@@ -213,7 +215,60 @@ int main() {
 					PWM[3] = -a;
 				}
 			}
+
+
+
+
+			if (((durum) & (1 << 14)) - (1 << 14) == 0) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+				x_durum = 1;
+			}
+			if (((durum) & (1 << 12)) - (1 << 12) == 0) { //demekki 12. bit 1 olmus yani yesil led yani led4 yani -x kordinati
+				x_durum = 0;
+			}
+
+			if (((durum) & (1 << 13)) - (1 << 13) == 0) { //demekki 13. bit 1 olmus yani turuncu led yani led3 yani +y kordinati
+				y_durum = 1;
+			}
+			if (((durum) & (1 << 15)) - (1 << 15) == 0) { //demekki 15. bit 1 olmus yani mavi led yani led6 yani -y kordinati
+				y_durum = 0;
+			}
+
+			if (x_durum) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+				GPIOD->ODR |= (1 << 14);
+				GPIOD->ODR &= ~(1 << 12);
+			} else {
+				GPIOD->ODR |= (1 << 12);
+				GPIOD->ODR &= ~(1 << 14);
+			}
+
+			if (y_durum) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+				GPIOD->ODR |= (1 << 13);
+				GPIOD->ODR &= ~(1 << 15);
+			} else {
+				GPIOD->ODR |= (1 << 15);
+				GPIOD->ODR &= ~(1 << 13);
+			}
+
+
+			if (x_durum) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+				SendChar('X');
+			} else {
+				SendChar('x');
+			}
+
+			if (y_durum) { //demekki 14. bit 1 olmus yani kirmizi led yani led5 yani +x kordinati
+				SendChar('Y');
+			} else {
+				SendChar('y');
+			}
+			SendTxt("\r\n");
+			DelayMs(100);
+
+
+
 		}
+
+
 	}
 
 	TIM7->DIER = 0x0000; // Update Int disable
@@ -224,3 +279,48 @@ int main() {
 	}
 
 }
+
+void UsartInit(void)
+{
+//   USART3 MODULUNU AKTIF HALE GETIRELIM
+
+   RCC->APB1ENR|=0x00040000;      // USART3 Clk Enable (Rehber Sayfa 113)
+   RCC->APB1RSTR|=0x00040000;      // USART3 Resetlendi
+   GPIOB->AFR[1]=0x07777700;             // PB10..PB14 pinleri USART3 ile alakalandirildi (Hard Sayfa 49)
+   GPIOB->MODER|=0x2AA00000;      // GPIOB 10..14 icin alternatif fonksiyon tanimi (Rehber Sayfa 148)
+
+//   USART3 MODULUNU AYARLAYALIM      // 1 Start, 8 Data, 1 Stop, No parity (Default degerler)
+
+   RCC->APB1RSTR&=~0x00040000;      // USART3 Reseti kaldiralim
+   USART3->SR&=~0X03FF;                 // Status registeri silelim
+   USART3->BRR=0X1112;            // 9600 Baud
+
+   USART3->CR1|=0x0000200C;              // USART3 enable
+}
+
+void SendChar(char Tx)
+{
+   while(!(USART3->SR&0x80));      // TX Buffer dolu ise bekle (Rehber Sayfa 646)
+   USART3->DR=Tx;
+}
+
+void SendTxt(char *Adr)
+{
+      while(*Adr)
+        {
+          SendChar(*Adr);
+          Adr++;
+        }
+}
+
+
+void DelayMs(int miliseconds) {
+	int i = 0, j = 0;
+	for (i = 0; i < miliseconds; i++) {
+		for (j = 0; j < 8388; j++) {
+
+		}
+	}
+}
+
+
